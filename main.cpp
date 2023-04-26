@@ -7,6 +7,15 @@ using json = nlohmann::json;
 
 using namespace std;
 
+string generate_curl_command(const std::string& api_key, const std::string& prompt) {
+    string command11 =
+            R"(curl -s https://api.openai.com/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer )";
+    string command12 = R"(" -d '{"model": "davinci", "prompt": ")";
+    string command2 = R"(", "temperature": 0.5, "max_tokens": 10}')";
+    string joined = command11 + api_key + command12 + prompt + command2;
+    return joined;
+}
+
 int main() {
     array<char, 128> buffer{};
     string output;
@@ -21,14 +30,10 @@ int main() {
         getline(cin, prompt);
 //        cout << prompt;
 
-    // Transfer data from openai server
-        string command11 =
-                R"(curl -s https://api.openai.com/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer )";
-        string command12 = R"(" -d '{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": ")";
-        string command2 = R"("}]}')";
-        string joined = command11 + api_key + command12 + prompt + command2;
+        string joined = generate_curl_command(api_key, prompt);
 
-        //    cout << joined;
+
+            //    cout << joined;
 
         // Open a pipe to read the output of the command
         FILE* pipe = popen(joined.c_str(), "r");
